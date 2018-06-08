@@ -9,7 +9,9 @@ import leftMenu from '../../widgets/left-menu';
 
 export default {
     async mounted() {
+        this.$Spin.show();
         await this.activityManageGetData(this.transSearchData(this.searchData));
+        this.$Spin.hide();
         await this.$groupGetFirstArea();
     },
     data() {
@@ -295,6 +297,7 @@ export default {
         handleSubmit(name) {
             this.$refs[name].validate(async (valid) => {
                 if (valid) {
+                    this.$Spin.show();
                     const newValid = Object.assign({}, this.formValidate);
 
                     newValid.beginDate = moment(this.formValidate.beginDate).format(
@@ -310,6 +313,7 @@ export default {
                     } else {
                         this.$Message.error('新增/编辑失败，请重新尝试');
                     }
+                    this.$Spin.hide();
                 } else {
                     this.$Message.error('请检查填写！');
                 }

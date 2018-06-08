@@ -10,7 +10,9 @@ import leftMenu from '../../widgets/left-menu';
 
 export default {
     async mounted() {
+        this.$Spin.show();
         await this.commentGetData(this.searchData);
+        this.$Spin.hide();
         this.uploadListPic = this.$refs.uploadpic.fileList;
         this.uploadList = this.$refs.upload.fileList;
 
@@ -19,6 +21,13 @@ export default {
     data() {
         return {
             basePath: __API__.BASEURL, // 域名
+            starList: [
+                5,
+                4,
+                3,
+                2,
+                1
+            ],
             searchData: {
                 productId: 0,
                 fromUserId: 0, // 写死，固定传0
@@ -127,12 +136,27 @@ export default {
                             type: 'success',
                             size: 'large'
                         },
+                        style: {
+                            marginRight: '5px'
+                        },
                         on: {
                             click: () => {
                                 this.openOrClock(params.row, 1);
                             }
                         }
                     }, '启用')
+
+                    // h('Button', {
+                    //     props: {
+                    //         type: 'warning',
+                    //         size: 'large'
+                    //     },
+                    //     on: {
+                    //         click: () => {
+                    //             this.toUp(params.row);
+                    //         }
+                    //     }
+                    // }, '置顶')
                 ])
             }
             ],
@@ -142,6 +166,8 @@ export default {
                 id: 0,
                 user: '',
                 productId: 0,
+                available: 1, // 传死
+                fromUserId: 0, // 传死
                 star: 0,
                 logisticStar: 0,
                 content: '',
@@ -190,7 +216,8 @@ export default {
             'commentGetData',
             '$groupGetProductList',
             'commentUpdateData',
-            'commentAddData'
+            'commentAddData',
+            'commentUpData'
         ]),
 
         async search() {
@@ -206,11 +233,16 @@ export default {
                 id: 0,
                 productId: '',
                 user: '',
-                star: 6,
-                logisticStar: 6,
+                star: 5,
+                logisticStar: 5,
+                available: 1, // 默认传1
+                fromUserId: 0, // 默认传0
                 content: '',
                 stick: '0'
             };
+
+            this.$refs.upload.fileList.splice(0);
+            this.$refs.uploadpic.fileList.splice(0);
             this.modal = true;
             this.addModal = true;
         },
@@ -232,10 +264,46 @@ export default {
                         available: status,
                         content: row.content,
                         star: row.star,
-                        logisticStar: row.logisticStar
+                        logisticStar: row.logisticStar,
+                        fromUserId: row.fromUserId,
+                        productId: row.productId,
+                        stick: row.stick,
+                        user: row.userName
                     });
 
                     if (this.commentUpdateResult && this.commentUpdateResult.code === 1) {
+                        this.$Message.success(`${str}成功`);
+
+                        this.search();
+                    } else {
+                        this.$Message.error(`${str}未成功`);
+                    }
+                }
+            });
+        },
+
+        toUp(row) {
+            const str = '置顶';
+
+            this.$Modal.confirm({
+                title: '',
+                content: `确定${str}此评论吗？`,
+                okText: '确定',
+                cancelText: '取消',
+                onOk: async () => {
+                    await this.commentUpData({
+                        id: row.id,
+                        available: status,
+                        content: row.content,
+                        star: row.star,
+                        logisticStar: row.logisticStar,
+                        fromUserId: row.fromUserId,
+                        productId: row.productId,
+                        stick: row.stick,
+                        user: row.userName
+                    });
+
+                    if (this.commentUpResult && this.commentUpResult.code === 1) {
                         this.$Message.success(`${str}成功`);
 
                         this.search();
@@ -252,8 +320,9 @@ export default {
         async show(row) {
             this.formValidate = {
                 id: row.id ? row.id : 0,
-                productId: 0,
                 available: row.available ? row.available : 0,
+                fromUserId: row.fromUserId ? row.fromUserId : 0,
+                productId: row.productId ? row.productId : '',
                 user: row.userName ? row.userName : '',
                 star: row.star ? row.star : '',
                 logisticStar: row.logisticStar ? row.logisticStar : '',
@@ -278,16 +347,19 @@ export default {
                     // 编辑提交的内容
                     const editForm = {
                         available: this.formValidate.available,
+                        user: this.formValidate.user,
                         content: this.formValidate.content,
                         id: this.formValidate.id,
                         logisticStar: this.formValidate.logisticStar,
-                        star: this.formValidate.star
+                        star: this.formValidate.star,
+                        fromUserId: this.formValidate.fromUserId,
+                        stick: this.formValidate.stick
                     };
 
                     let pic = '';
 
                     if (this.uploadListPic.length > 0) {
-                        pic = this.uploadListPic[0].url; // 头像
+                        pic = this.uploadListPic[0].name; // 头像
                     }
 
                     const imgArr = [];
@@ -295,7 +367,7 @@ export default {
 
                     if (this.uploadList.length > 0) {
                         this.uploadList.forEach((item) => {
-                            imgArr.push(item.url);
+                            imgArr.push(item.name);
                         });
 
                         image = imgArr.join(',');
@@ -374,6 +446,10 @@ export default {
             }
         },
 
+        handleRemovePic(file) {
+            this.$refs.uploadpic.fileList.splice(0, 1);
+        },
+
         handleRemove(file) {
             const fileList = this.$refs.upload.fileList;
 
@@ -422,6 +498,7 @@ export default {
             'commentData',
             '$groupProductList',
             'commentUpdateResult',
+            'commentAddResult',
             'commentAddResult'
         ])
     },

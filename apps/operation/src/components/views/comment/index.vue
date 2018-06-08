@@ -52,8 +52,9 @@
                         size="large"
                         @click="exportData(3)">
                     <Icon type="ios-download-outline"></Icon> Export custom data</Button> -->
-                <div style="margin: 10px; overflow: hidden">
-                    <div style="float: right;">
+                <div style="margin: 10px; overflow: hidden" class="page-wrap">
+                    <div class="total-nums">总共 <span>{{commentData.data.page.total}}</span> 条记录</div>
+                    <div>
                         <Page :total="this.commentData.data.page.total"
                               :current="searchData.pageNum"
                               :pageSize="searchData.pageSize"
@@ -73,14 +74,15 @@
                   :model="formValidate"
                   :rules="ruleValidate"
                   :label-width="90">
-                <FormItem label="上传头像" v-show="addModal">
+                <FormItem label="上传头像"
+                          v-show="addModal">
                     <div class="demo-upload-list"
                          v-for="item in uploadListPic">
                         <template v-if="item.status === 'finished'">
                             <img :src="item.url">
                             <div class="demo-upload-list-cover">
                                 <Icon type="ios-trash-outline"
-                                      @click.native="handleRemove(item)"></Icon>
+                                      @click.native="handleRemovePic(item)"></Icon>
                             </div>
                         </template>
                         <template v-else>
@@ -107,7 +109,8 @@
                         </div>
                     </Upload>
                 </FormItem>
-                <FormItem label="上传评价图" v-show="addModal">
+                <FormItem label="上传评价图"
+                          v-show="addModal">
                     <div class="demo-upload-list"
                          v-for="item in uploadList">
                         <template v-if="item.status === 'finished'">
@@ -146,12 +149,12 @@
                           v-show="addModal"
                           prop="productId">
                     <Select v-model="formValidate.productId"
-                        placeholder="请选择商品"
-                        style="width: 200px">
-                    <Option v-for="item in $groupProductList.product"
-                            :value="item.id"
-                            :key="item.id">{{ item.name }}</Option>
-                </Select>
+                            placeholder="请选择商品"
+                            style="width: 200px">
+                        <Option v-for="item in $groupProductList.product"
+                                :value="item.id"
+                                :key="item.id">{{ item.name }}</Option>
+                    </Select>
                 </FormItem>
                 <FormItem label="用户名称"
                           prop="user">
@@ -160,15 +163,21 @@
                 </FormItem>
                 <FormItem label="商品评分"
                           prop="star">
-                    <Input v-model="formValidate.star"
-                           :number="true"
-                           placeholder="请填写评分，1-5"></Input>
+                    <Select v-model="formValidate.star"
+                            style="width: 200px">
+                        <Option v-for="item in starList"
+                                :value="item"
+                                :key="item">{{item}}</Option>
+                    </Select>
                 </FormItem>
                 <FormItem label="物流评分"
                           prop="logisticStar">
-                    <Input v-model="formValidate.logisticStar"
-                           :number="true"
-                           placeholder="请填写评分，1-5"></Input>
+                    <Select v-model="formValidate.logisticStar"
+                            style="width: 200px">
+                        <Option v-for="item in starList"
+                                :value="item"
+                                :key="item">{{item}}</Option>
+                    </Select>
                 </FormItem>
                 <FormItem label="评价详情"
                           prop="content">
@@ -180,9 +189,9 @@
                 <FormItem label="置顶权重"
                           prop="stick">
                     <i-switch size="large"
-                            v-model="formValidate.stick"
-                            true-value="1"
-                            false-value="0">
+                              v-model="formValidate.stick"
+                              true-value="1"
+                              false-value="0">
                         <span slot="open">置顶</span>
                         <span slot="close">不置顶</span>
                     </i-switch>

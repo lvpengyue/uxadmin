@@ -12,11 +12,13 @@ const state = {
     data: '',
 
     updateResult: '', // 修改的结果/启用/禁用
+    upResult: '', // 置顶的结果
     addResult: '' // 评论员新增评论的结果
 };
 
 const COMMENT_SET_DATA = 'COMMENT_SET_DATA';
 const COMMENT_SET_UPDATE_RESULT = 'COMMENT_SET_UPDATE_RESULT';
+const COMMENT_SET_UP_RESULT = 'COMMENT_SET_UP_RESULT';
 const COMMENT_SET_ADD_RESULT = 'COMMENT_SET_ADD_RESULT';
 
 const mutations = {
@@ -38,6 +40,15 @@ const mutations = {
      */
     [COMMENT_SET_UPDATE_RESULT](state, mutation) {
         state.updateResult = mutation.payload;
+    },
+
+    /**
+     * 设置置顶的结果
+     * @param {Object} state state
+     * @param {FSA} mutation mutation
+     */
+    [COMMENT_SET_UP_RESULT](state, mutation) {
+        state.upResult = mutation.payload;
     },
 
     /**
@@ -110,6 +121,34 @@ const actions = {
     },
 
     /**
+     * 置顶的结果
+     * @param {Object} context context
+     * @param {Object} params params
+     */
+    async commentUpData({
+        commit,
+        dispatch,
+        state
+    }, params) {
+        try {
+            const response = await dispatch('$apisCall', {
+                config: $apiConf.COMMENT_UPDATE_COMMENT,
+                params: Object.assign({}, params, {
+                    account: this.getters.$groupAccount.account,
+                    password: this.getters.$groupAccount.password
+                })
+            });
+
+            commit({
+                type: COMMENT_SET_UP_RESULT,
+                payload: response
+            });
+        } catch (error) {
+            alert(`置顶评论失败,错误号：${error.code}`);
+        }
+    },
+
+    /**
      * 新增评论
      * @param {Object} context context
      * @param {Object} params params
@@ -156,6 +195,15 @@ const getters = {
      */
     commentUpdateResult(state) {
         return state.updateResult;
+    },
+
+    /**
+     * 置顶评论的结果
+     * @param {Object} state state
+     * @return {String} updateResult  结果
+     */
+    commentUpResult(state) {
+        return state.upResult;
     },
 
     /**

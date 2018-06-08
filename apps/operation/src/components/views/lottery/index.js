@@ -9,7 +9,9 @@ import leftMenu from '../../widgets/left-menu';
 
 export default {
     async mounted() {
+        this.$Spin.show();
         await this.lotteryGetData(this.transSearchData(this.searchData));
+        this.$Spin.hide();
         await this.$groupGetFirstArea();
         await this.$groupGetCouponList();
         await this.$groupGetActivityList();

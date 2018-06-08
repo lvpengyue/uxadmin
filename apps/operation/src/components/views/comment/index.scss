@@ -4,7 +4,6 @@
     display: flex;
 
     width: 100%;
-    height: 100%;
     min-height: 100%;
     padding: 75px 30px;
 
@@ -13,7 +12,7 @@
     }
 
     .activity-content {
-        overflow: scroll;
+        overflow-x: scroll;
 
         width: 100%;
 
@@ -38,6 +37,20 @@
 
         .content {
             padding: 20px;
+        }
+
+        .page-wrap {
+            display: flex;
+
+            justify-content: space-between;
+
+            .total-nums {
+                font-size: 16px;
+
+                span {
+                    color: red;
+                }
+            }
         }
     }
 }

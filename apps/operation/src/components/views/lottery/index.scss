@@ -39,5 +39,19 @@
         .content {
             padding: 20px;
         }
+
+        .page-wrap {
+            display: flex;
+
+            justify-content: space-between;
+
+            .total-nums {
+                font-size: 16px;
+
+                span {
+                    color: red;
+                }
+            }
+        }
     }
 }

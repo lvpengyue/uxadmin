@@ -71,8 +71,9 @@
                         size="large"
                         @click="exportData(3)">
                     <Icon type="ios-download-outline"></Icon> Export custom data</Button> -->
-                <div style="margin: 10px; overflow: hidden">
-                    <div style="float: right;">
+                <div style="margin: 10px; overflow: hidden" class="page-wrap">
+                    <div class="total-nums">总共 <span>{{activityManageData.data.page.total}}</span> 条记录</div>
+                    <div>
                         <Page :total="this.activityManageData.data.page.total"
                               :current="searchData.pageNum"
                               :pageSize="searchData.pageSize"

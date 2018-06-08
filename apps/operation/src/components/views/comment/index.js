@@ -98,6 +98,22 @@ export default {
                 }
             },
             {
+                title: '是否置顶',
+                key: 'stick',
+                width: 200,
+                render: (h, params) => {
+                    let text = '不置顶';
+
+                    if (params.row.stick === '1') {
+                        text = '置顶';
+                    }
+
+                    return h('div', [
+                        h('p', text)
+                    ]);
+                }
+            },
+            {
                 title: '操作',
                 width: 300,
                 key: 'action',

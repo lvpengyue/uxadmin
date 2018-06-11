@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="left-menu">
         <Menu theme="light"
               :active-name="selected">
             <MenuGroup title="运营管理">

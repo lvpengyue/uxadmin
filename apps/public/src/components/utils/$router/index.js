@@ -50,7 +50,6 @@ router.beforeEach((to, from, next) => {
             next();
         }
     }, 0);
-    next();
 });
 
 router.afterEach(() => {
